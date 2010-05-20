@@ -35,24 +35,49 @@ describe CSSFormatter do
     
     before :each do
       @formatter = CSSFormatter.new
-      @css1 = %| p {width:450px;height:200px;padding:0px} |
-      @css2 = %| .right50 { float: right; width: 49.5% } |
-      @css3 = %| #header {background:#ccc;color:#c00;} |
-      @css_all = [ @css1, @css2, @css3 ].join "\n" 
+      @rule1 = %| p {width:450px;height:200px;padding:0px} |
+      @rule2 = %| .right50 { float: right; width: 49.5% } |
+      @rule3 = %| body.home #header > div {background:#ccc;color:#c00;} |
+      @rules = [ @rule1, @rule2, @rule3 ].join "\n" 
     end
     
     it "should format the passed CSS string" do
-      @formatter.format(@css1).should == %|p {
+      @formatter.format(@rule1).should == %|p {
   height: 200px;
   padding: 0px;
   width: 450px;
 }|
     end
     
-    it "should also format this CSS string" do
-      @formatter.format(@css2).should == %|.right50 {
+    it "should format a second CSS string" do
+      @formatter.format(@rule2).should == %|.right50 {
   float: right;
   width: 49.5%;
+}|
+    end
+    
+    it "should format a third CSS string" do
+      @formatter.format(@rule3).should == %|body.home #header > div {
+  background: #ccc;
+  color: #c00;
+}|      
+    end
+    
+    it "should format CSS strings with multiple rules" do
+      @formatter.format(@rules).should == %|p {
+  height: 200px;
+  padding: 0px;
+  width: 450px;
+}
+
+.right50 {
+  float: right;
+  width: 49.5%;
+}
+
+body.home #header > div {
+  background: #ccc;
+  color: #c00;
 }|
     end
     

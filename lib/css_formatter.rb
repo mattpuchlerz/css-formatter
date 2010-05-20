@@ -11,20 +11,24 @@ class CSSFormatter
   end
   
   def format css
-    css.strip!
+    rules = css.gsub("\n", '').split('}').reject { |r| r =~ /^\s+$/ }.map do |rule|
+      
+      rule = rule.strip + '}'
     
-    selector = css.match(/(.+)\s+\{/)[1]
+      selector = rule.match(/(.+)\s+\{/)[1]
     
-    properties = css.
-      match(/.*\{(.+)\}.*/)[1].
-      split(';').
-      sort.
-      map do |property| 
-        pieces = property.split(':').map { |piece| piece.strip }
-        "#{ options[:indentation] }#{ pieces[0] }: #{ pieces[1] };"
-      end
-    
-    "#{ selector } {\n#{ properties.join "\n" }\n}"
+      properties = rule.
+        match(/.*\{(.+)\}.*/)[1].
+        split(';').
+        sort.
+        map do |property| 
+          pieces = property.split(':').map { |piece| piece.strip }
+          "#{ options[:indentation] }#{ pieces[0] }: #{ pieces[1] };"
+        end
+      
+      "#{ selector } {\n#{ properties.join "\n" }\n}"
+      
+    end.join "\n\n"
   end
   
 end
