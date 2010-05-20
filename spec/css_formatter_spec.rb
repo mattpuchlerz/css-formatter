@@ -49,6 +49,13 @@ describe CSSFormatter do
 }|
     end
     
+    it "should also format this CSS string" do
+      @formatter.format(@css2).should == %|.right50 {
+  float: right;
+  width: 49.5%;
+}|
+    end
+    
   end
   
 end

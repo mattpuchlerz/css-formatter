@@ -19,7 +19,10 @@ class CSSFormatter
       match(/.*\{(.+)\}.*/)[1].
       split(';').
       sort.
-      map { |p| p.sub /(.+):(.+)/, (options[:indentation] + '\1: \2;') }
+      map do |property| 
+        pieces = property.split(':').map { |piece| piece.strip }
+        "#{ options[:indentation] }#{ pieces[0] }: #{ pieces[1] };"
+      end
     
     "#{ selector } {\n#{ properties.join "\n" }\n}"
   end
