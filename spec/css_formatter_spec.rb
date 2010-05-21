@@ -81,6 +81,50 @@ body.home #header > div {
 }|
     end
     
+    context "with a different indentation" do
+      
+      before :each do
+        @formatter = CSSFormatter.new :indentation => "\t"
+      end
+      
+      it "should format the passed CSS string" do
+        @formatter.format(@rule1).should == %|p {
+\theight: 200px;
+\tpadding: 0px;
+\twidth: 450px;
+}|
+      end
+      
+    end
+    
+    context "with no alphabetization" do
+      
+      before :each do
+        @formatter = CSSFormatter.new :alphabetize => false
+      end
+      
+      it "should format the passed CSS string" do
+        @formatter.format(@rule1).should == %|p {
+  width: 450px;
+  height: 200px;
+  padding: 0px;
+}|
+      end
+      
+    end
+    
+    context "as single-line" do
+      
+      before :each do
+        @formatter = CSSFormatter.new :multiline => false
+      end
+      
+      it "should format the passed CSS string" do
+        @formatter.format(@rule1).should == %|p { height: 200px; padding: 0px; width: 450px; }|
+      end
+      
+    end
+    
   end
   
 end

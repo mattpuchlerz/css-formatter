@@ -11,24 +11,35 @@ class CSSFormatter
   end
   
   def format css
-    rules = css.gsub("\n", '').split('}').reject { |r| r =~ /^\s+$/ }.map do |rule|
-      
-      rule = rule.strip + '}'
+    separator = options[:multiline] ? "\n" : ' '
     
-      selector = rule.match(/(.+)\s+\{/)[1]
-    
-      properties = rule.
-        match(/.*\{(.+)\}.*/)[1].
-        split(';').
-        sort.
-        map do |property| 
-          pieces = property.split(':').map { |piece| piece.strip }
-          "#{ options[:indentation] }#{ pieces[0] }: #{ pieces[1] };"
-        end
+    rules_from(css).map do |rule|
       
-      "#{ selector } {\n#{ properties.join "\n" }\n}"
+      properties = properties_from rule
+      properties.sort! if options[:alphabetize]
+      
+      properties.map! do |property| 
+        pieces = property.split(':').map { |piece| piece.strip }
+        "#{ options[:indentation] if options[:multiline] }#{ pieces[0] }: #{ pieces[1] };"
+      end
+      
+      selector_from(rule) + ' {' + separator + properties.join(separator) + separator + '}'
       
     end.join "\n\n"
+  end
+  
+  private
+  
+  def rules_from css
+    css.scan( /\s*([^\{]+\{.*?\})\s*/ ).flatten
+  end
+  
+  def properties_from rule
+    rule.match( /.*\{(.+)\}.*/ )[1].split ';'
+  end
+  
+  def selector_from rule
+    rule.match( /(.+)\s+\{/ )[1]
   end
   
 end
