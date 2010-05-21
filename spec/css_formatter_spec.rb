@@ -36,7 +36,7 @@ describe CSSFormatter do
     before :each do
       @formatter = CSSFormatter.new
       @rule1 = %| p {width:450px;height:200px;padding:0px} |
-      @rule2 = %| .right50 { float: right; width: 49.5% } |
+      @rule2 = %| .right50 {   float: right;   width: 49.5%   } |
       @rule3 = %| body.home #header > div {background:#ccc;color:#c00;} |
       @rules = [ @rule1, @rule2, @rule3 ].join "\n" 
     end

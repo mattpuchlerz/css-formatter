@@ -11,31 +11,32 @@ class CSSFormatter
   end
   
   def format css
-    separator = options[:multiline] ? "\n" : ' '
-    
-    rules_from(css).map do |rule|
-      
-      properties = properties_from rule
-      properties.sort! if options[:alphabetize]
-      
-      properties.map! do |property| 
-        pieces = property.split(':').map { |piece| piece.strip }
-        "#{ options[:indentation] if options[:multiline] }#{ pieces[0] }: #{ pieces[1] };"
-      end
-      
-      selector_from(rule) + ' {' + separator + properties.join(separator) + separator + '}'
-      
-    end.join "\n\n"
+    rules_from(css).map { |rule| format_rule rule }.join "\n\n"
   end
   
   private
   
-  def rules_from css
-    css.scan( /\s*([^\{]+\{.*?\})\s*/ ).flatten
+  def format_property property
+    pieces = property.split(':').map { |piece| piece.strip }
+    ( options[:multiline] ? options[:indentation] : '' ) + pieces[0] + ': ' + pieces[1] + ';'    
+  end
+  
+  def format_rule rule
+    separator = options[:multiline] ? "\n" : ' '
+    
+    properties = properties_from rule
+    properties.sort! if options[:alphabetize]
+    properties.map! { |property| format_property property }
+    
+    selector_from(rule) + ' {' + separator + properties.join(separator) + separator + '}'
   end
   
   def properties_from rule
     rule.match( /.*\{(.+)\}.*/ )[1].split ';'
+  end
+  
+  def rules_from css
+    css.scan( /\s*([^\{]+\{.*?\})\s*/ ).flatten
   end
   
   def selector_from rule
